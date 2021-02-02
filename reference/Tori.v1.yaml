@@ -1,0 +1,461 @@
+openapi: 3.0.0
+info:
+  title: Töri
+  version: '1.0'
+  description: |-
+    Version 1.0 of Töri Api
+    Has
+  contact: {}
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  '/users/{userId}':
+    parameters:
+      - schema:
+          type: integer
+        name: userId
+        in: path
+        required: true
+        description: Id of an existing user.
+    get:
+      summary: Get User Info by User ID
+      tags: []
+      responses:
+        '200':
+          description: User Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                example-1:
+                  value:
+                    userid: 1
+                    firstName: string
+                    lastName: string
+                    email: email@domain.com
+                    password: pa$$word
+        '404':
+          description: User Not Found
+      operationId: get-users-userId
+      description: Retrieve the information of the user with the matching user ID.
+    patch:
+      summary: Update User Information
+      operationId: patch-users-userId
+      responses:
+        '200':
+          description: User Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                example-1:
+                  value:
+                    userid: 1
+                    firstName: string
+                    lastName: string
+                    email: email@domain.com
+                    password: pa$$word
+        '404':
+          description: User Not Found
+        '409':
+          description: Email Already Taken
+      description: Update the infromation of an existing user.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                  description: 'If a new email is given, the user''s email verified property will be set to false.'
+                dateOfBirth:
+                  type: string
+            examples:
+              Update First Name:
+                value:
+                  firstName: Rebecca
+              Update Email:
+                value:
+                  email: rebecca@gmail.com
+              Update Last Name & Date of Birth:
+                value:
+                  lastName: Baker
+                  dateOfBirth: '1985-10-02'
+        description: Patch user properties to update.
+  /user:
+    post:
+      summary: Create New User
+      operationId: post-user
+      responses:
+        '200':
+          description: User Created Succesfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples: {}
+        '400':
+          description: Missing Required Information
+        '409':
+          description: Email Already Taken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+            examples:
+              example-1:
+                value:
+                  firstName: string
+                  lastName: string
+                  email: email@domain.com
+                  password: pa$$word
+        description: Post the necessary fields for the API to create a new user.
+      description: Create a new user.
+  /Items:
+    put:
+      summary: ''
+      operationId: put-Items
+      responses:
+        '200':
+          description: OK
+      description: User creates a new item to be sold
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Item'
+      parameters:
+        - $ref: '#/components/parameters/userid'
+    parameters:
+      - required: true
+    get:
+      summary: ''
+      operationId: get-Items
+      responses:
+        '200':
+          description: OK
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: Category
+          description: Query by category of items
+        - schema:
+            type: string
+          in: query
+          name: Location
+          description: Query by location of items
+        - schema:
+            type: number
+          in: query
+          name: Date of posting
+          description: Query by location of time
+      description: Get items with with query paramaters
+  '/items/{itemId}':
+    parameters:
+      - schema:
+          type: number
+        name: itemId
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-items-itemId
+      description: Get the item by the Id
+    delete:
+      summary: ''
+      operationId: delete-items-itemId
+      responses:
+        '200':
+          description: OK
+      description: Delete item by itemId
+    patch:
+      summary: ''
+      operationId: patch-items-itemId
+      responses:
+        '200':
+          description: OK
+      description: Edit a property of already existing item
+  /login:
+    post:
+      summary: ''
+      operationId: post-login
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  status:
+                    type: object
+                    required:
+                      - type
+                      - message
+                      - code
+                      - error
+                    properties:
+                      type:
+                        type: string
+                        minLength: 1
+                      message:
+                        type: string
+                        minLength: 1
+                      code:
+                        type: number
+                      error:
+                        type: boolean
+                  data:
+                    type: array
+                    uniqueItems: true
+                    minItems: 1
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                          minLength: 1
+                        token:
+                          $ref: '#/components/schemas/JWT-Payload'
+                      required:
+                        - status
+                        - token
+                required:
+                  - status
+                  - data
+              examples:
+                example-1:
+                  value:
+                    status:
+                      type: string
+                      message: string
+                      code: 0
+                      error: true
+                    data:
+                      - status: string
+                        user:
+                          email: string
+                          firstname: string
+                          userId: 0
+                        expires_at: string
+                        session_token: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  status:
+                    type: object
+                    properties:
+                      error:
+                        type: boolean
+                      code:
+                        type: number
+                      type:
+                        type: string
+                        minLength: 1
+                      message:
+                        type: string
+                        minLength: 1
+                    required:
+                      - error
+                      - code
+                      - type
+                      - message
+                required:
+                  - status
+              examples:
+                example-1:
+                  value:
+                    status:
+                      error: true
+                      code: 400
+                      type: bad request
+                      message: bad request
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  status:
+                    type: object
+                    properties:
+                      code:
+                        type: number
+                      error:
+                        type: boolean
+                      message:
+                        type: string
+                        minLength: 1
+                      type:
+                        type: string
+                        minLength: 1
+                    required:
+                      - code
+                      - error
+                      - message
+                      - type
+                required:
+                  - status
+              examples:
+                example-1:
+                  value:
+                    status:
+                      code: 401
+                      error: true
+                      message: Authentication Failed
+                      type: Unauthorized
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - email
+                - password
+        description: ''
+components:
+  schemas:
+    User:
+      title: User
+      type: object
+      description: User information
+      x-examples:
+        Alice Smith:
+          userid: 142
+          firstName: Alice
+          lastName: Smith
+          email: alice.smith@gmail.com
+          dateOfBirth: '1997-10-31'
+          password: dasd4554ffsfasvz
+      properties:
+        userid:
+          type: integer
+          description: 'Unique identifier for the given user. '
+          minimum: 1
+          example: 1
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+          example: email@domain.com
+        password:
+          type: string
+          description: Password for user hashed
+          format: password
+          example: 3123asdasd4343525
+      required:
+        - firstName
+        - lastName
+        - email
+        - password
+    Item:
+      title: Item
+      type: object
+      x-examples:
+        example-1:
+          itemId: 0
+          Title: string
+          Description: string
+          Category: string
+          Location: string
+          Images: string
+          Price: 0
+          Date posted: 0
+          Delivery type: string
+          Seller:
+            userid: 1
+            firstName: string
+            lastName: string
+            email: email@domain.com
+            password: string
+      description: |-
+        Item registered user wants to sell.
+        User needs to give Title,location,category and price others are optional.
+      properties:
+        itemId:
+          type: number
+        Title:
+          type: string
+        Description:
+          type: string
+        Category:
+          type: string
+        Location:
+          type: string
+        Images:
+          type: string
+        Price:
+          type: number
+        Date posted:
+          type: number
+          description: |
+            Automatic
+        Delivery type:
+          type: string
+          description: User picks from Shpping or picup
+        Seller:
+          $ref: '#/components/schemas/User'
+      required:
+        - itemId
+        - Title
+        - Category
+        - Location
+        - Price
+    JWT-Payload:
+      description: When user logs in this is loaded into the jwt payload what is used to auth
+      type: object
+      x-examples:
+        example-1:
+          userid: 0
+          firstName: string
+          lastName: string
+          email: string
+      properties:
+        sub:
+          type: number
+          description: userID
+        email:
+          type: string
+          format: email
+      required:
+        - sub
+        - email
+  securitySchemes:
+    JWT:
+      type: http
+      scheme: bearer
+      description: ''
+  parameters:
+    userid:
+      name: userId
+      in: header
+      schema:
+        type: number
