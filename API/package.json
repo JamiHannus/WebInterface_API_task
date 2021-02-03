@@ -1,0 +1,28 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "Basic user inventory api",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/t9haja00/WebInterface_API_task.git"
+  },
+  "keywords": [
+    "API",
+    "starter",
+    "noob"
+  ],
+  "author": "Jami Hannus",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/t9haja00/WebInterface_API_task/issues"
+  },
+  "homepage": "https://github.com/t9haja00/WebInterface_API_task#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.7"
+  }
+}
