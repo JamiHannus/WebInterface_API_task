@@ -39,6 +39,8 @@ paths:
           description: User Not Found
       operationId: get-users-userId
       description: Retrieve the information of the user with the matching user ID.
+      security:
+        - JWT: []
     patch:
       summary: Update User Information
       operationId: patch-users-userId
@@ -89,7 +91,9 @@ paths:
                   lastName: Baker
                   dateOfBirth: '1985-10-02'
         description: Patch user properties to update.
-  /user:
+      security:
+        - JWT: []
+  /users:
     post:
       summary: Create New User
       operationId: post-user
@@ -119,6 +123,7 @@ paths:
                   password: pa$$word
         description: Post the necessary fields for the API to create a new user.
       description: Create a new user.
+    parameters: []
   /Items:
     put:
       summary: ''
@@ -132,8 +137,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Item'
-      parameters:
-        - $ref: '#/components/parameters/userid'
+      parameters: []
+      security:
+        - JWT: []
     parameters:
       - required: true
     get:
@@ -169,7 +175,13 @@ paths:
     get:
       summary: Your GET endpoint
       tags: []
-      responses: {}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
       operationId: get-items-itemId
       description: Get the item by the Id
     delete:
@@ -179,6 +191,8 @@ paths:
         '200':
           description: OK
       description: Delete item by itemId
+      security:
+        - JWT: []
     patch:
       summary: ''
       operationId: patch-items-itemId
@@ -186,6 +200,8 @@ paths:
         '200':
           description: OK
       description: Edit a property of already existing item
+      security:
+        - JWT: []
   /login:
     post:
       summary: ''
@@ -337,6 +353,11 @@ paths:
               required:
                 - email
                 - password
+            examples:
+              example-1:
+                value:
+                  email: string
+                  password: string
         description: ''
 components:
   schemas:
@@ -349,7 +370,7 @@ components:
           userid: 142
           firstName: Alice
           lastName: Smith
-          email: alice.smith@gmail.com
+          email: ''
           dateOfBirth: '1997-10-31'
           password: dasd4554ffsfasvz
       properties:
@@ -422,7 +443,10 @@ components:
           type: string
           description: User picks from Shpping or picup
         Seller:
-          $ref: '#/components/schemas/User'
+          type: object
+          properties:
+            UserId:
+              type: string
       required:
         - itemId
         - Title
