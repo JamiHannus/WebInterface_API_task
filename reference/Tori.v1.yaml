@@ -184,6 +184,8 @@ paths:
                 $ref: '#/components/schemas/Item'
       operationId: get-items-itemId
       description: Get the item by the Id
+      security:
+        - JWT: []
     delete:
       summary: ''
       operationId: delete-items-itemId
@@ -305,7 +307,7 @@ paths:
                       type: bad request
                       message: bad request
         '401':
-          description: Unauthorized
+          description: Wrong password
           content:
             application/json:
               schema:
@@ -359,6 +361,8 @@ paths:
                   email: string
                   password: string
         description: ''
+      security:
+        - Login: []
 components:
   schemas:
     User:
@@ -477,6 +481,9 @@ components:
       type: http
       scheme: bearer
       description: ''
+    Login:
+      type: http
+      scheme: basic
   parameters:
     userid:
       name: userId
