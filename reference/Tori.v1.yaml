@@ -127,7 +127,16 @@ paths:
       operationId: put-Items
       responses:
         '200':
-          description: OK
+          description: Item created
+          headers:
+            itemId:
+              schema:
+                type: string
+              description: Created item id
+        '400':
+          description: Creation failed
+        '401':
+          description: Need to be logged in
       description: User creates a new item to be sold
       requestBody:
         content:
@@ -137,7 +146,7 @@ paths:
             examples:
               example-1:
                 value:
-                  itemId: 0
+                  itemId: 100
                   Title: string
                   Description: string
                   Category: string
@@ -173,7 +182,9 @@ paths:
       operationId: get-Items
       responses:
         '200':
-          description: OK
+          description: OK here are the items
+        '400':
+          description: Something went wrong
       parameters:
         - schema:
             type: string
@@ -242,7 +253,7 @@ paths:
             examples:
               example-1:
                 value:
-                  itemId: 0
+                  itemId: 500
                   Title: string
                   Description: string
                   Category: string
@@ -272,7 +283,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/JWT-Payload'
               examples:
-                example-1:
+                example:
                   value:
                     status:
                       type: string
@@ -415,8 +426,8 @@ components:
       title: Item
       type: object
       x-examples:
-        example-2:
-          itemId: 0
+        example:
+          itemId: 1
           Title: string
           Description: string
           Category: string
@@ -443,6 +454,9 @@ components:
       properties:
         itemId:
           type: number
+          minimum: 1
+          description: |
+            Autoincrement id
         Title:
           type: string
         Description:
@@ -486,6 +500,7 @@ components:
         sellerId:
           type: string
           example: Sellers Id
+          description: Automatically added from the security token
       required:
         - itemId
         - Title
@@ -493,34 +508,21 @@ components:
         - Location
         - Price
         - Delivery type
-        - sellerId
     JWT-Payload:
       description: When user logs in this is loaded into the jwt payload what is used to auth
       type: object
       x-examples:
         example-1:
           userid: 0
-          firstName: string
-          lastName: string
-          email: string
       properties:
-        sub:
+        userId:
           type: number
           description: userID
-        email:
-          type: string
-          format: email
       required:
-        - sub
-        - email
+        - userId
   securitySchemes:
     JWT:
       type: http
       scheme: bearer
       description: ''
-  parameters:
-    userid:
-      name: userId
-      in: header
-      schema:
-        type: number
+  parameters: {}
