@@ -2,8 +2,40 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const { response } = require('express');
 const app = express()
-const port = 3000
+require('dotenv/config');
 
+var pgp = require('pg-promise')(/* options */);
+var db = pgp('postgres://test:test2@localhost:5432/mydb');
+const port = 3000;
+
+let sco; // shared connection object;
+
+db.connect()
+    .then(obj => {
+        // obj.client = new connected Client object;
+
+        sco = obj; // save the connection object;
+
+        // execute all the queries you need:
+        return sco.any('SELECT * FROM mydb.users');
+    })
+    .then(data => {
+      console.log(data)
+        // success
+    })
+    .catch(error => {
+      console.log(error)
+        // error
+    })
+    .finally(() => {
+        // release the connection, if it was successful:
+        if (sco) {
+            // if you pass `true` into method done, i.e. done(true),
+            // it will make the pool kill the physical connection.
+            console.log("sco done")
+            sco.done();
+        }
+    });
 
 const usersRoute = require('./routes/users');
 const itemsRoute = require('./routes/items');
@@ -77,7 +109,7 @@ module.exports = {
       console.log('  /items{param1},{param2},{param3}[GET],[PUT]');
       console.log('  /login [POST]');
       console.log('  /Users/{userId} [GET],[PATCH]');
-      console.log('  /User [POST]');
+      console.log('  /register [POST]');
 
       console.log('  /hello/{param1}/world/{param2} [GET]');
     });
