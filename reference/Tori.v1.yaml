@@ -35,10 +35,12 @@ paths:
                     lastName: string
                     email: email@domain.com
                     password: pa$$word
-        '404':
-          description: User Not Found
+        '401':
+          description: Need to be logged in
       operationId: get-users-userId
       description: Retrieve the information of the user with the matching user ID.
+      security:
+        - JWT: []
     patch:
       summary: Update User Information
       operationId: patch-users-userId
@@ -129,11 +131,41 @@ paths:
       description: User creates a new item to be sold
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
               $ref: '#/components/schemas/Item'
-      parameters:
-        - $ref: '#/components/parameters/userid'
+            examples:
+              example-1:
+                value:
+                  itemId: 0
+                  Title: string
+                  Description: string
+                  Category: string
+                  Location: string
+                  Images:
+                    - file1: string
+                      file2: string
+                      file3: string
+                      file4: string
+                      file5: string
+                      file6: string
+                  Price: 0
+                  Date posted: 0
+                  Delivery type: string
+                  Seller:
+                    userid: 1
+                    firstName: string
+                    lastName: string
+                    email: email@domain.com
+                    password: 3123asdasd4343525
+          application/xml:
+            schema:
+              type: object
+              properties: {}
+        description: ''
+      parameters: []
+      security:
+        - JWT: []
     parameters:
       - required: true
     get:
@@ -169,7 +201,11 @@ paths:
     get:
       summary: Your GET endpoint
       tags: []
-      responses: {}
+      responses:
+        '200':
+          description: 'Here is the item by {Id}'
+        '400':
+          description: No item by the id
       operationId: get-items-itemId
       description: Get the item by the Id
     delete:
@@ -177,65 +213,64 @@ paths:
       operationId: delete-items-itemId
       responses:
         '200':
-          description: OK
+          description: OK item was removed
+        '400':
+          description: Wrong item id
+        '401':
+          description: Need to be logged in to remove a item
       description: Delete item by itemId
+      security:
+        - JWT: []
     patch:
       summary: ''
       operationId: patch-items-itemId
       responses:
         '200':
-          description: OK
+          description: Item updated
+        '400':
+          description: Something went wrong
+        '401':
+          description: User needts to be logged in
       description: Edit a property of already existing item
+      security:
+        - JWT: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Item'
+            examples:
+              example-1:
+                value:
+                  itemId: 0
+                  Title: string
+                  Description: string
+                  Category: string
+                  Location: string
+                  Images:
+                    - file1: string
+                      file2: string
+                      file3: string
+                      file4: string
+                      file5: string
+                      file6: string
+                  Price: 0
+                  Date posted: 0
+                  Delivery type: string
+                  sellerId: Sellers Id
+        description: User edits already exsisting item posting
   /login:
     post:
       summary: ''
       operationId: post-login
       responses:
         '200':
-          description: OK
+          description: 'OK here is your autohirization token dont loose it :)'
           headers: {}
           content:
             application/json:
               schema:
-                description: ''
-                type: object
-                properties:
-                  status:
-                    type: object
-                    required:
-                      - type
-                      - message
-                      - code
-                      - error
-                    properties:
-                      type:
-                        type: string
-                        minLength: 1
-                      message:
-                        type: string
-                        minLength: 1
-                      code:
-                        type: number
-                      error:
-                        type: boolean
-                  data:
-                    type: array
-                    uniqueItems: true
-                    minItems: 1
-                    items:
-                      type: object
-                      properties:
-                        status:
-                          type: string
-                          minLength: 1
-                        token:
-                          $ref: '#/components/schemas/JWT-Payload'
-                      required:
-                        - status
-                        - token
-                required:
-                  - status
-                  - data
+                $ref: '#/components/schemas/JWT-Payload'
               examples:
                 example-1:
                   value:
@@ -289,7 +324,7 @@ paths:
                       type: bad request
                       message: bad request
         '401':
-          description: Unauthorized
+          description: Login failed
           content:
             application/json:
               schema:
@@ -350,7 +385,6 @@ components:
           firstName: Alice
           lastName: Smith
           email: alice.smith@gmail.com
-          dateOfBirth: '1997-10-31'
           password: dasd4554ffsfasvz
       properties:
         userid:
@@ -358,6 +392,7 @@ components:
           description: 'Unique identifier for the given user. '
           minimum: 1
           example: 1
+          readOnly: true
         firstName:
           type: string
         lastName:
@@ -380,13 +415,19 @@ components:
       title: Item
       type: object
       x-examples:
-        example-1:
+        example-2:
           itemId: 0
           Title: string
           Description: string
           Category: string
           Location: string
-          Images: string
+          Images:
+            - file1: string
+              file2: string
+              file3: string
+              file4: string
+              file5: string
+              file6: string
           Price: 0
           Date posted: 0
           Delivery type: string
@@ -395,7 +436,7 @@ components:
             firstName: string
             lastName: string
             email: email@domain.com
-            password: string
+            password: 3123asdasd4343525
       description: |-
         Item registered user wants to sell.
         User needs to give Title,location,category and price others are optional.
@@ -411,7 +452,28 @@ components:
         Location:
           type: string
         Images:
-          type: string
+          type: array
+          items:
+            type: object
+            properties:
+              file1:
+                type: string
+                format: binary
+              file2:
+                type: string
+                format: binary
+              file3:
+                type: string
+                format: binary
+              file4:
+                type: string
+                format: binary
+              file5:
+                type: string
+                format: binary
+              file6:
+                type: string
+                format: binary
         Price:
           type: number
         Date posted:
@@ -420,15 +482,18 @@ components:
             Automatic
         Delivery type:
           type: string
-          description: User picks from Shpping or picup
-        Seller:
-          $ref: '#/components/schemas/User'
+          description: 'Pickup,postage or other?'
+        sellerId:
+          type: string
+          example: Sellers Id
       required:
         - itemId
         - Title
         - Category
         - Location
         - Price
+        - Delivery type
+        - sellerId
     JWT-Payload:
       description: When user logs in this is loaded into the jwt payload what is used to auth
       type: object
