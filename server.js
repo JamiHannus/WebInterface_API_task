@@ -1,47 +1,18 @@
 const express = require('express')
-const bodyParser = require('body-parser')
-const { response } = require('express');
 const app = express()
 require('dotenv/config');
 
 var pgp = require('pg-promise')(/* options */);
-var db = pgp('postgres://test:test2@localhost:5432/mydb');
+var db = pgp(process.env.DB_CONNECTION);
+module.exports = db;
+
 const port = 3000;
-
-let sco; // shared connection object;
-
-db.connect()
-    .then(obj => {
-        // obj.client = new connected Client object;
-
-        sco = obj; // save the connection object;
-
-        // execute all the queries you need:
-        return sco.any('SELECT * FROM mydb.users');
-    })
-    .then(data => {
-      console.log(data)
-        // success
-    })
-    .catch(error => {
-      console.log(error)
-        // error
-    })
-    .finally(() => {
-        // release the connection, if it was successful:
-        if (sco) {
-            // if you pass `true` into method done, i.e. done(true),
-            // it will make the pool kill the physical connection.
-            console.log("sco done")
-            sco.done();
-        }
-    });
 
 const usersRoute = require('./routes/users');
 const itemsRoute = require('./routes/items');
 const loginRoute = require('./routes/login');
 const registerRoute = require('./routes/register');
-const cors = require('cors');
+
 
 app.use('/users',usersRoute);
 app.use('/items',itemsRoute);
@@ -52,17 +23,6 @@ app.get('/', (req, res) => {
     res.send('Hello World!')
     res.status(200);
   })
-  
-  app.get('/items', (req, res) => {
-      res.send('Here be items')
-    })
-  
-  app.get('/login', (req, res) => {
-      res.send('Here be login')
-    })
-  app.get('/users', (req, res) => {
-      res.send('Here new users')
-    })
 
     app.get('/hello/:parameter1/:parameter2', (req, res) => {
         res.send('Your route parameters are\n' + JSON.stringify(req.params));
@@ -111,7 +71,7 @@ module.exports = {
       console.log('  /Users/{userId} [GET],[PATCH]');
       console.log('  /register [POST]');
 
-      console.log('  /hello/{param1}/world/{param2} [GET]');
+      console.log('  /hello/{param1}/{param2} [GET]');
     });
   },
   close: function() {
