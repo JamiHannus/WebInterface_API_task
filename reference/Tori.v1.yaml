@@ -91,7 +91,7 @@ paths:
                   lastName: Baker
                   dateOfBirth: '1985-10-02'
         description: Patch user properties to update.
-  /user:
+  /register:
     post:
       summary: Create New User
       operationId: post-user
@@ -107,6 +107,8 @@ paths:
           description: Missing Required Information
         '409':
           description: Email Already Taken
+        '500':
+          description: Internal Server Error
       requestBody:
         content:
           application/json:
@@ -121,6 +123,7 @@ paths:
                   password: pa$$word
         description: Post the necessary fields for the API to create a new user.
       description: Create a new user.
+    parameters: []
   /Items:
     put:
       summary: ''
@@ -380,6 +383,10 @@ paths:
                   type: string
                 password:
                   type: string
+                firstname:
+                  type: string
+                lastname:
+                  type: string
               required:
                 - email
                 - password
@@ -518,6 +525,10 @@ components:
         userId:
           type: number
           description: userID
+        iat:
+          type: number
+          format: time
+          description: time when token was issued
       required:
         - userId
   securitySchemes:
