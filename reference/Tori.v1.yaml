@@ -417,6 +417,8 @@ components:
           type: string
           format: date-time
           description: time when token was issued
+        userid:
+          type: string
       required:
         - email
   securitySchemes:
