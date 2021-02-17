@@ -4,32 +4,19 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const bodyParser = require('body-parser')
 var jsonParser = bodyParser.json()
+
+
+// validation 
 var Validator = require('jsonschema').Validator;
-
-
-const Ajv = require("ajv").default;
-
 const userRegister = require('../schemas/userRegister.json');
+
+
 
 router.get('/' , (req, res)=> {
     res.send('Here be register');
 });
-// function validatbody(req, res, next)
-// {
-    // const ajv =  new Ajv({next: true});
-//     // prepare error object
-//     console.log("hello");
-//     const data =req.body;
-//     const validate = ajv.compile(userRegister);
-//     // const valid = validate(data);
-//     // console.log(valid);
-//     // if (!valid) {
-//     //     console.log(validate.errors);
-//     //     next(validate.errors);
-//     // }
-//     next(); // no validation errors, so pass to the next
-// }
 
+//create new user
 
 router.post('/',jsonParser, (req, res) => {
     var v = new Validator();
