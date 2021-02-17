@@ -142,7 +142,7 @@ paths:
                   Description: Small red table
                   Category: Furniture
                   Location: Oulu
-                  Price: 5 euros
+                  Price: 5
                   Delivery type: Pickup
                   sellerId: 1 (sellers id)
                   Date of posting: '2019-08-24'
@@ -160,8 +160,6 @@ paths:
       parameters: []
       security:
         - JWT: []
-    parameters:
-      - required: true
     get:
       summary: ''
       operationId: get-Items
@@ -250,7 +248,7 @@ paths:
                       file4: string
                       file5: string
                       file6: string
-                  Price: 0
+                  Price: 10
                   Date posted: 0
                   Delivery type: string
                   sellerId: Sellers Id
@@ -261,28 +259,13 @@ paths:
       operationId: post-login
       responses:
         '200':
-          description: 'OK here is your autohirization token dont loose it :)'
+          description: 'OK here is your token dont loose it :)'
           headers: {}
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/JWT-Payload'
-              examples:
-                example:
-                  value:
-                    status:
-                      type: string
-                      message: string
-                      code: 0
-                      error: true
-                    data:
-                      - status: string
-                        user:
-                          email: string
-                          firstname: string
-                          userId: 0
-                        expires_at: string
-                        session_token: string
+              examples: {}
         '400':
           description: Invalid email or password.
           content:
@@ -290,8 +273,6 @@ paths:
               schema:
                 description: ''
                 type: object
-              examples:
-                example-1: {}
       requestBody:
         content:
           application/json:
@@ -306,6 +287,8 @@ paths:
                 - email
                 - password
         description: ''
+      security:
+        - basic login for jwt token: []
 components:
   schemas:
     User:
@@ -389,6 +372,7 @@ components:
           type: string
         Price:
           type: number
+          minimum: 1
         Delivery type:
           type: string
           description: |
@@ -423,20 +407,24 @@ components:
       type: object
       x-examples:
         example-1:
-          userid: 0
+          email: test@test.com
+          iat: '2019-08-24T14:15:22Z'
       properties:
-        userId:
-          type: number
-          description: userID
+        email:
+          type: string
+          description: User login
         iat:
-          type: number
-          format: time
+          type: string
+          format: date-time
           description: time when token was issued
       required:
-        - userId
+        - email
   securitySchemes:
     JWT:
       type: http
       scheme: bearer
       description: ''
+    basic login for jwt token:
+      type: http
+      scheme: basic
   parameters: {}
