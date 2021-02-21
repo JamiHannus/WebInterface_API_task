@@ -117,9 +117,9 @@ paths:
       description: Create a new user.
     parameters: []
   /Items:
-    put:
+    post:
       summary: ''
-      operationId: put-Items
+      operationId: post-Items
       responses:
         '200':
           description: Item created
@@ -332,36 +332,17 @@ components:
       type: object
       x-examples:
         example:
-          itemId: 1
-          Title: string
-          Description: string
-          Category: string
-          Location: string
-          Images:
-            - file1: string
-              file2: string
-              file3: string
-              file4: string
-              file5: string
-              file6: string
-          Price: 0
-          Date posted: 0
-          Delivery type: string
-          Seller:
-            userid: 1
-            firstName: string
-            lastName: string
-            email: email@domain.com
-            password: 3123asdasd4343525
+          Title: table
+          Description: small white table
+          Category: Furniture
+          Location: Oulu
+          Price: 10
+          Delivery type: Delivery
+          image1: table.gif
       description: |-
         Item registered user wants to sell.
         User needs to give Title,location,category and price others are optional.
       properties:
-        itemId:
-          type: number
-          minimum: 1
-          description: |
-            Auto increment id
         Title:
           type: string
         Description:
@@ -377,13 +358,6 @@ components:
           type: string
           description: |
             Pickup,postage
-        sellerId:
-          type: string
-          example: Sellers Id
-          description: Automatically added from the security token
-        Date of posting:
-          type: string
-          format: date
         image1:
           type: string
         image2:
@@ -396,6 +370,10 @@ components:
           type: string
         image6:
           type: string
+        '':
+          type: array
+          items:
+            type: string
       required:
         - Title
         - Category
@@ -409,6 +387,11 @@ components:
         example-1:
           email: test@test.com
           iat: '2019-08-24T14:15:22Z'
+          userid: '1'
+        example-2:
+          email: string
+          iat: '2019-08-24T14:15:22Z'
+          userid: string
       properties:
         email:
           type: string
@@ -419,6 +402,9 @@ components:
           description: time when token was issued
         userid:
           type: string
+          example: '1'
+          description: |
+            automatic
       required:
         - email
   securitySchemes:
