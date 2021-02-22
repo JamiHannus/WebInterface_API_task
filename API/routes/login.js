@@ -4,6 +4,8 @@ const db = require('../server');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const passportHttp = require('passport-http');
+const jwt  = require('jsonwebtoken');
+require('dotenv').config;
 
 router.get('/' , (req, res)=> {
     res.send('Here be token giving');
@@ -21,19 +23,23 @@ passport.use(new passportHttp.BasicStrategy((email, password, done) => {
         //will console log true or false
         console.log(validPassword);
         if (!validPassword) return done(null, false);
-        done(null, user[0].email);
+        done(null, user[0]);
       })
   })
   );
   
   // login a user
   router.post('/', (req, res, next) => {
-    passport.authenticate('basic', (err, data, info) => {
+    passport.authenticate('basic', (err, data) => {
       if (err) return next(err);
       if (!data) return res.status(400).send('Invalid email or password.');
   
-      console.log(data)
-      res.send(data);
+     // get the iduser and email for the token
+      const {iduser,email}= data;
+      const tokenpayload = { iduser,email};
+      //jwt token hereeeeee!
+      const jwttoken= jwt.sign(tokenpayload,process.env.SUPER_SECRET_KEY)
+      res.json({token:jwttoken})
     })(req, res, next);
   });
   
