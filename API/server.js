@@ -5,8 +5,8 @@ require('dotenv/config');
 var pgp = require('pg-promise')(/* options */);
 var db = pgp(process.env.DB_CONNECTION);
 module.exports = db;
-
 const port = 3000;
+// routes
 
 const usersRoute = require('./routes/users');
 const itemsRoute = require('./routes/items');
@@ -24,10 +24,10 @@ app.get('/', (req, res) => {
     res.status(200);
   })
 
-    app.get('/hello/:parameter1/:parameter2', (req, res) => {
+app.get('/hello/:parameter1/:parameter2', (req, res) => {
         res.send('Your route parameters are\n' + JSON.stringify(req.params));
-    });
-    
+  });
+
     /* This will be activated as the last if no other route matches. */
     app.use((req, res, next) => {
         const err = new Error('Not Found');
