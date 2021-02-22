@@ -3,7 +3,7 @@ const db = require('../server');
 const router = express.Router();
 const multer  = require('multer')
 const multerUpload = multer({ dest: 'uploads/' })
-
+const middleware =require('../components/checkToken');
 
 const bodyParser = require('body-parser')
 var jsonParser = bodyParser.json()
@@ -20,8 +20,10 @@ router.get('/' , (req, res)=> {
     //some query params
 });
 
-router.post('/' ,jsonParser,multerUpload.array('testFiles', 6), (req, res)=> {
+router.post('/' ,middleware.authenticateToken,jsonParser,multerUpload.array('testFiles', 6), (req, res)=> {
   const { title, description, category, location,deliverytype, price} = req.body;
+  const iduser = req.iduser;
+  // here req.files is the multeres return array and only intrested in the path of the picture and that is then passed to the database.
   const images = req.files.map(a=>a.path);
 
   const newItem = [
@@ -32,7 +34,7 @@ router.post('/' ,jsonParser,multerUpload.array('testFiles', 6), (req, res)=> {
         images,
         deliverytype,
         price,
-        iduser = 1]
+        iduser,]
   
 
   db.query(
