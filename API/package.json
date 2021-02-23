@@ -4,7 +4,7 @@
   "description": "Basic user inventory api",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "start": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -22,7 +22,26 @@
   },
   "homepage": "https://github.com/t9haja00/WebInterface_API_task#readme",
   "dependencies": {
+    "bcrypt": "^5.0.0",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "config": "^3.3.3",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "has-value": "^2.0.2",
+    "jsonschema": "^1.4.0",
+    "jsonwebtoken": "^8.5.1",
+    "multer": "^1.4.2",
+    "passport": "^0.4.1",
+    "passport-http": "^0.3.0",
+    "passport-jwt": "^4.0.0",
+    "pg-promise": "^10.9.2"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-json-schema": "^1.5.1",
+    "mocha": "^8.2.1",
     "nodemon": "^2.0.7"
   }
 }
