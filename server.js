@@ -4,7 +4,7 @@ const bodyParser= require('body-parser');
 require('dotenv/config');
 
 var pgp = require('pg-promise')(/* options */);
-var db = pgp(process.env.DATABASE_URL);
+var db = pgp(process.env.DATABASE_URL,ssl=true);
 module.exports = db;
 const port = process.env.PORT || 3000;
 app.use(express.json());
