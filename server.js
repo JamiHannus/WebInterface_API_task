@@ -1,11 +1,13 @@
 const express = require('express')
 const app = express()
+const bodyParser= require('body-parser');
 require('dotenv/config');
 
 var pgp = require('pg-promise')(/* options */);
 var db = pgp(process.env.DB_CONNECTION);
 module.exports = db;
-const port = 3000;
+const port = process.env.PORT || 3000;
+// app.use(express.json());
 // routes
 
 const usersRoute = require('./routes/users');
@@ -20,8 +22,7 @@ app.use('/login',loginRoute);
 app.use('/register',registerRoute);
 
 app.get('/', (req, res) => {
-    res.send('Hello World!')
-    res.status(200);
+    res.status(200).send({msg:'Hello World!'});
   })
 
 app.get('/hello/:parameter1/:parameter2', (req, res) => {
@@ -59,19 +60,18 @@ app.get('/hello/:parameter1/:parameter2', (req, res) => {
 
 let serverInstance = null;
 
-module.exports = {
+module.exports =  {
   start: function() {
     serverInstance = app.listen(port, () => {
       console.log(`Example app listening at http://localhost:${port}`);
       console.log('Available API endpoints');
-
-      console.log('  /items/{itemid} [GET],[PATCH],[DELETE]');
-      console.log('  /items{param1},{param2},{param3}[GET],[PUT]');
-      console.log('  /login [POST]');
-      console.log('  /Users/{userId} [GET],[PATCH]');
-      console.log('  /register [POST]');
-
-      console.log('  /hello/{param1}/{param2} [GET]');
+      console.log('/items/location [GET]');
+      console.log('/items/category [GET]');
+      console.log('/items [POST]');
+      console.log('/login [POST]');
+      console.log('/users/{email} [GET]');
+      console.log('/register [POST]');
+      console.log('/hello/{param1}/{param2} [GET]');
     });
   },
   close: function() {

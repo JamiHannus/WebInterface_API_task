@@ -8,7 +8,7 @@ const jwt  = require('jsonwebtoken');
 require('dotenv').config;
 
 router.get('/' , (req, res)=> {
-    res.send('Here be token giving use post');
+    res.status(201).send({msg:'Here be token giving use post'});
 });
 
 //function to find users password with email then compare 
