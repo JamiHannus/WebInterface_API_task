@@ -27,7 +27,7 @@ router.post('/',jsonParser, (req, res) => {
 
     if (result.errors.length == 0)
     {
-        const { email, password,firstname,lastname } = req.body;
+    const { email, password,firstname,lastname } = req.body;
     const hashedPassword = bcrypt.hashSync(password, 8);
     const newUser = [
       email,

@@ -1,8 +1,6 @@
 const express = require('express');
 const db = require('../server');
 const router = express.Router();
-const Ajv = require('ajv').default;
-
 const middleware =require('../components/checkToken');
 
 
@@ -14,7 +12,7 @@ router.get('/' ,middleware.authenticateToken, (req, res)=> {
     .then(data => { 
         if (data.length == 0) return res.status(400).send('Wrong email');
       //send all the data :P hashed password too :P
-      res.send(data);
+      res.status(200).send(data);
         // success
     })
     .catch(error => {
@@ -25,9 +23,8 @@ router.get('/' ,middleware.authenticateToken, (req, res)=> {
 });
 
 router.patch('/', middleware.authenticateToken, (req,res)=>{
-    //here we will have user profile changes.
-    //name mostly?
-    
+    //here we could  have user profile changes. 
+    res.send("hello, your profile looks good already");
 });
 
 module.exports = router;
