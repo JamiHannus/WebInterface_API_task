@@ -4,7 +4,8 @@
   "description": "Basic user inventory api",
   "main": "node index.js",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "node index.js",
+    "dev": "nodemon index.js",
     "test": "mocha"
   },
   "repository": {
