@@ -2,6 +2,8 @@ const express = require('express');
 const db = require('../server');
 const router = express.Router();
 // multer + cludinary
+
+
 const multer  = require('multer')
 const cloudinary = require('cloudinary').v2;
 const {CloudinaryStorage} = require('multer-storage-cloudinary');
@@ -71,8 +73,11 @@ router.get('/category',jsonParser, (req, res)=> {
 });
 router.post('/' ,middleware.authenticateToken,jsonParser,parser.array('image', 6), (req, res)=> {
   const { title, description, category, location,deliverytype, price} = req.body;
+  //we get the iduser from jwt token from middleware
   const iduser = req.iduser;
   // here req.files is the multeres return array and only intrested in the id of the picture and that is then passed to the database.
+  console.log(req.file);
+  console.log(req.files);
   const images = req.files.map(a=>a.public_id);
   const newItem = [
        title,
