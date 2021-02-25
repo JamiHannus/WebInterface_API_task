@@ -1,10 +1,21 @@
 const express = require('express');
 const db = require('../server');
 const router = express.Router();
+// multer + cludinary
 const multer  = require('multer')
-const multerUpload = multer({ dest: 'uploads/' })
+const cloudinary = require('cloudinary').v2;
+const {CloudinaryStorage} = require('multer-storage-cloudinary');
+//cloudinary settings
+const  storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params:{
+    folder: '/tori', 
+    Format: ['jpg', 'png']
+  },
+  });
+const parser = multer({ storage: storage });
+//middleware
 const middleware =require('../components/checkToken');
-
 const bodyParser = require('body-parser')
 var jsonParser = bodyParser.json()
 
@@ -58,11 +69,11 @@ router.get('/category',jsonParser, (req, res)=> {
       // error
   })
 });
-router.post('/' ,middleware.authenticateToken,jsonParser,multerUpload.array('testFiles', 6), (req, res)=> {
+router.post('/' ,middleware.authenticateToken,jsonParser,parser.array('image', 6), (req, res)=> {
   const { title, description, category, location,deliverytype, price} = req.body;
   const iduser = req.iduser;
-  // here req.files is the multeres return array and only intrested in the path of the picture and that is then passed to the database.
-  const images = req.files.map(a=>a.path);
+  // here req.files is the multeres return array and only intrested in the id of the picture and that is then passed to the database.
+  const images = req.files.map(a=>a.public_id);
   const newItem = [
        title,
         description,
