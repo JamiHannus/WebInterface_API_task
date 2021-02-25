@@ -63,7 +63,7 @@ let serverInstance = null;
 module.exports =  {
   start: function() {
     serverInstance = app.listen(port, () => {
-      console.log(`Example app listening at http://localhost:${port}`);
+      console.log(`listening at port ${port}`);
       console.log('Available API endpoints');
       console.log('/items/location [GET]');
       console.log('/items/category [GET]');

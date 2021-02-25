@@ -4,7 +4,8 @@
   "description": "Basic user inventory api",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon index.js",
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -40,6 +41,7 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
     "chai-json-schema": "^1.5.1",
     "mocha": "^8.2.1",
     "nodemon": "^2.0.7"
