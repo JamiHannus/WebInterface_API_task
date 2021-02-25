@@ -9,7 +9,7 @@ servers:
   - url: 'http://localhost:3000'
     description: local
   - description: Web
-    url: 'https://thetoriapp.herokuapp.com/'
+    url: 'https://thetoriapp.herokuapp.com'
 paths:
   '/users/{userId}':
     parameters:
@@ -279,6 +279,17 @@ paths:
       description: |-
         Get item by Id
         Can be get all data from single item
+  /User:
+    get:
+      summary: test
+      tags: []
+      responses: {}
+      operationId: get-User
+    post:
+      summary: test
+      tags: []
+      responses: {}
+      operationId: post-User
 components:
   schemas:
     User:
