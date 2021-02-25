@@ -81,7 +81,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
-              examples: {}
+              examples:
+                example:
+                  value:
+                    firstName: test
+                    lastName: test
+                    email: email@domain.com
+                    password: 3123asdasd4343525
         '400':
           description: Missing Required Information
         '409':
@@ -202,6 +208,8 @@ paths:
                 location:
                   type: string
                   description: Oulu
+              required:
+                - location
         description: ''
     parameters: []
   /items:
@@ -261,6 +269,13 @@ paths:
                 iditem:
                   type: number
                   description: Automatically generated when item is created in database
+                  minimum: 1
+              required:
+                - iditem
+            examples:
+              example-1:
+                value:
+                  iditem: 1
         description: ''
       description: |-
         Get item by Id
