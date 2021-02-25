@@ -279,17 +279,6 @@ paths:
       description: |-
         Get item by Id
         Can be get all data from single item
-  /User:
-    get:
-      summary: test
-      tags: []
-      responses: {}
-      operationId: get-User
-    post:
-      summary: test
-      tags: []
-      responses: {}
-      operationId: post-User
 components:
   schemas:
     User:
@@ -361,13 +350,9 @@ components:
           description: |
             Pickup,postage
         image:
-          type:
-            - string
-            - array
+          type: string
           description: 'Images done with multipart/form data, Api accecpts up to 6 images, send the with same name file name'
           format: byte
-          items:
-            type: string
       required:
         - Title
         - Category
