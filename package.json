@@ -2,7 +2,7 @@
   "name": "api",
   "version": "1.0.0",
   "description": "Basic user inventory api",
-  "main": "index.js",
+  "main": "node index.js",
   "scripts": {
     "start": "nodemon index.js",
     "test": "mocha"
