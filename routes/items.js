@@ -15,7 +15,7 @@ const  storage = new CloudinaryStorage({
     Format: ['jpg', 'png']
   },
   });
-const parser = multer({ storage: storage });
+const parser = multer({ storage: storage }).array('image', 6);
 //middleware
 const middleware =require('../components/checkToken');
 const bodyParser = require('body-parser')
@@ -71,8 +71,13 @@ router.get('/category',jsonParser, (req, res)=> {
       // error
   })
 });
-router.post('/' ,middleware.authenticateToken,jsonParser,parser.array('image', 6), (req, res)=> {
-  const { title, description, category, location,deliverytype, price} = req.body;
+router.post('/' ,middleware.authenticateToken,jsonParser, (req, res)=> {
+  parser(req,res, function (err){
+    if(err){
+      console.log("error with img upload",err);
+      return res.status(400).json('Only up to 6 images');
+    }
+    const { title, description, category, location,deliverytype, price} = req.body;
   //we get the iduser from jwt token from middleware
   const iduser = req.iduser;
   // here req.files is the multeres return array and only intrested in the id of the picture and that is then passed to the database.
@@ -96,8 +101,10 @@ router.post('/' ,middleware.authenticateToken,jsonParser,parser.array('image', 6
     )
     .catch((err) => {
       console.log("error ", err);
-      res.sendStatus(500);
+      res.sendStatus(501).json('Something went wrong');
     });
+  })
+
 });
 
 
