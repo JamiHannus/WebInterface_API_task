@@ -1,0 +1,55 @@
+
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 2
+    },
+    "description": {
+      "type": "string",
+      "minLength": 2
+    },
+    "category": {
+      "type": "string"
+      ,"minLength": 2
+    },
+    "location": {
+      "type": "string",
+      "minLength": 2
+    },
+    "images1": {
+      "type": "string"
+    },
+    "images2": {
+      "type": "string"
+    },
+    "images3": {
+      "type": "string"
+    },
+    "images4": {
+      "type": "string"
+    },
+    "images5": {
+        "type": "string"
+      },
+      "images6": {
+        "type": "string"
+      },
+    "askingPrice": {
+      "type": "integer",
+      "minLength": 1
+    },
+    "deliveryType": {
+      "type": "string",
+      "minLength": 2
+    }
+  },
+  "required": [
+    "title",
+    "category",
+    "askingPrice",
+    "deliveryType"
+  ]
+}
