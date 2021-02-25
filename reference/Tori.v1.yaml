@@ -35,10 +35,15 @@ paths:
                     lastName: string
                     email: email@domain.com
                     password: pa$$word
-        '404':
-          description: User Not Found
+        '401':
+          description: Need to be logged in
       operationId: get-users-userId
-      description: Retrieve the information of the user with the matching user ID.
+      description: |-
+        Retrieve the information of the user with the matching user ID.
+        Also could be used for get all items? for this user.
+        For possible profile page
+      security:
+        - JWT: []
     patch:
       summary: Update User Information
       operationId: patch-users-userId
@@ -59,8 +64,6 @@ paths:
                     password: pa$$word
         '404':
           description: User Not Found
-        '409':
-          description: Email Already Taken
       description: Update the infromation of an existing user.
       requestBody:
         content:
@@ -72,24 +75,15 @@ paths:
                   type: string
                 lastName:
                   type: string
-                email:
-                  type: string
-                  description: 'If a new email is given, the user''s email verified property will be set to false.'
-                dateOfBirth:
-                  type: string
             examples:
               Update First Name:
                 value:
                   firstName: Rebecca
-              Update Email:
-                value:
-                  email: rebecca@gmail.com
               Update Last Name & Date of Birth:
                 value:
                   lastName: Baker
-                  dateOfBirth: '1985-10-02'
         description: Patch user properties to update.
-  /user:
+  /register:
     post:
       summary: Create New User
       operationId: post-user
@@ -105,6 +99,8 @@ paths:
           description: Missing Required Information
         '409':
           description: Email Already Taken
+        '500':
+          description: Internal Server Error
       requestBody:
         content:
           application/json:
@@ -119,29 +115,59 @@ paths:
                   password: pa$$word
         description: Post the necessary fields for the API to create a new user.
       description: Create a new user.
+    parameters: []
   /Items:
-    put:
+    post:
       summary: ''
-      operationId: put-Items
+      operationId: post-Items
       responses:
         '200':
-          description: OK
+          description: Item created
+          headers: {}
+        '400':
+          description: Creation failed
+        '401':
+          description: Need to be logged in
       description: User creates a new item to be sold
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
               $ref: '#/components/schemas/Item'
-      parameters:
-        - $ref: '#/components/parameters/userid'
-    parameters:
-      - required: true
+            examples:
+              example-1:
+                value:
+                  itemId: 1
+                  Title: Table
+                  Description: Small red table
+                  Category: Furniture
+                  Location: Oulu
+                  Price: 5
+                  Delivery type: Pickup
+                  sellerId: 1 (sellers id)
+                  Date of posting: '2019-08-24'
+                  image1: string
+                  image2: string
+                  image3: string
+                  image4: string
+                  image5: string
+                  image6: string
+          application/xml:
+            schema:
+              type: object
+              properties: {}
+        description: ''
+      parameters: []
+      security:
+        - JWT: []
     get:
       summary: ''
       operationId: get-Items
       responses:
         '200':
-          description: OK
+          description: OK here are the items
+        '400':
+          description: Something went wrong
       parameters:
         - schema:
             type: string
@@ -169,7 +195,11 @@ paths:
     get:
       summary: Your GET endpoint
       tags: []
-      responses: {}
+      responses:
+        '200':
+          description: 'Here is the item by {Id}'
+        '400':
+          description: No item by the id
       operationId: get-items-itemId
       description: Get the item by the Id
     delete:
@@ -177,153 +207,72 @@ paths:
       operationId: delete-items-itemId
       responses:
         '200':
-          description: OK
+          description: OK item was removed
+        '400':
+          description: Wrong item id
+        '401':
+          description: Need to be logged in to remove a item
       description: Delete item by itemId
+      security:
+        - JWT: []
     patch:
       summary: ''
       operationId: patch-items-itemId
       responses:
         '200':
-          description: OK
+          description: Item updated
+        '400':
+          description: Something went wrong
+        '401':
+          description: User needts to be logged in
       description: Edit a property of already existing item
+      security:
+        - JWT: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Item'
+            examples:
+              example-1:
+                value:
+                  itemId: 500
+                  Title: string
+                  Description: string
+                  Category: string
+                  Location: string
+                  Images:
+                    - file1: string
+                      file2: string
+                      file3: string
+                      file4: string
+                      file5: string
+                      file6: string
+                  Price: 10
+                  Date posted: 0
+                  Delivery type: string
+                  sellerId: Sellers Id
+        description: User edits already exsisting item posting
   /login:
     post:
       summary: ''
       operationId: post-login
       responses:
         '200':
-          description: OK
+          description: 'OK here is your token dont loose it :)'
           headers: {}
           content:
             application/json:
               schema:
-                description: ''
-                type: object
-                properties:
-                  status:
-                    type: object
-                    required:
-                      - type
-                      - message
-                      - code
-                      - error
-                    properties:
-                      type:
-                        type: string
-                        minLength: 1
-                      message:
-                        type: string
-                        minLength: 1
-                      code:
-                        type: number
-                      error:
-                        type: boolean
-                  data:
-                    type: array
-                    uniqueItems: true
-                    minItems: 1
-                    items:
-                      type: object
-                      properties:
-                        status:
-                          type: string
-                          minLength: 1
-                        token:
-                          $ref: '#/components/schemas/JWT-Payload'
-                      required:
-                        - status
-                        - token
-                required:
-                  - status
-                  - data
-              examples:
-                example-1:
-                  value:
-                    status:
-                      type: string
-                      message: string
-                      code: 0
-                      error: true
-                    data:
-                      - status: string
-                        user:
-                          email: string
-                          firstname: string
-                          userId: 0
-                        expires_at: string
-                        session_token: string
+                $ref: '#/components/schemas/JWT-Payload'
+              examples: {}
         '400':
-          description: Bad Request
+          description: Invalid email or password.
           content:
             application/json:
               schema:
                 description: ''
                 type: object
-                properties:
-                  status:
-                    type: object
-                    properties:
-                      error:
-                        type: boolean
-                      code:
-                        type: number
-                      type:
-                        type: string
-                        minLength: 1
-                      message:
-                        type: string
-                        minLength: 1
-                    required:
-                      - error
-                      - code
-                      - type
-                      - message
-                required:
-                  - status
-              examples:
-                example-1:
-                  value:
-                    status:
-                      error: true
-                      code: 400
-                      type: bad request
-                      message: bad request
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                description: ''
-                type: object
-                properties:
-                  status:
-                    type: object
-                    properties:
-                      code:
-                        type: number
-                      error:
-                        type: boolean
-                      message:
-                        type: string
-                        minLength: 1
-                      type:
-                        type: string
-                        minLength: 1
-                    required:
-                      - code
-                      - error
-                      - message
-                      - type
-                required:
-                  - status
-              examples:
-                example-1:
-                  value:
-                    status:
-                      code: 401
-                      error: true
-                      message: Authentication Failed
-                      type: Unauthorized
       requestBody:
         content:
           application/json:
@@ -338,6 +287,8 @@ paths:
                 - email
                 - password
         description: ''
+      security:
+        - basic login for jwt token: []
 components:
   schemas:
     User:
@@ -350,7 +301,6 @@ components:
           firstName: Alice
           lastName: Smith
           email: alice.smith@gmail.com
-          dateOfBirth: '1997-10-31'
           password: dasd4554ffsfasvz
       properties:
         userid:
@@ -358,6 +308,7 @@ components:
           description: 'Unique identifier for the given user. '
           minimum: 1
           example: 1
+          readOnly: true
         firstName:
           type: string
         lastName:
@@ -380,28 +331,18 @@ components:
       title: Item
       type: object
       x-examples:
-        example-1:
-          itemId: 0
-          Title: string
-          Description: string
-          Category: string
-          Location: string
-          Images: string
-          Price: 0
-          Date posted: 0
-          Delivery type: string
-          Seller:
-            userid: 1
-            firstName: string
-            lastName: string
-            email: email@domain.com
-            password: string
+        example:
+          Title: table
+          Description: small white table
+          Category: Furniture
+          Location: Oulu
+          Price: 10
+          Delivery type: Delivery
+          image1: table.gif
       description: |-
         Item registered user wants to sell.
         User needs to give Title,location,category and price others are optional.
       properties:
-        itemId:
-          type: number
         Title:
           type: string
         Description:
@@ -410,52 +351,68 @@ components:
           type: string
         Location:
           type: string
-        Images:
-          type: string
         Price:
           type: number
-        Date posted:
-          type: number
-          description: |
-            Automatic
+          minimum: 1
         Delivery type:
           type: string
-          description: User picks from Shpping or picup
-        Seller:
-          $ref: '#/components/schemas/User'
+          description: |
+            Pickup,postage
+        image1:
+          type: string
+        image2:
+          type: string
+        image3:
+          type: string
+        image4:
+          type: string
+        image5:
+          type: string
+        image6:
+          type: string
+        '':
+          type: array
+          items:
+            type: string
       required:
-        - itemId
         - Title
         - Category
         - Location
         - Price
+        - Delivery type
     JWT-Payload:
       description: When user logs in this is loaded into the jwt payload what is used to auth
       type: object
       x-examples:
         example-1:
-          userid: 0
-          firstName: string
-          lastName: string
+          email: test@test.com
+          iat: '2019-08-24T14:15:22Z'
+          userid: '1'
+        example-2:
           email: string
+          iat: '2019-08-24T14:15:22Z'
+          userid: string
       properties:
-        sub:
-          type: number
-          description: userID
         email:
           type: string
-          format: email
+          description: User login
+        iat:
+          type: string
+          format: date-time
+          description: time when token was issued
+        userid:
+          type: string
+          example: '1'
+          description: |
+            automatic
       required:
-        - sub
         - email
   securitySchemes:
     JWT:
       type: http
       scheme: bearer
       description: ''
-  parameters:
-    userid:
-      name: userId
-      in: header
-      schema:
-        type: number
+    basic login for jwt token:
+      type: http
+      scheme: basic
+  parameters: {}
