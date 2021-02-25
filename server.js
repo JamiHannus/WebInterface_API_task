@@ -6,7 +6,7 @@ require('dotenv/config');
 var pgp = require('pg-promise')(/* options */);
 const cn= {
   connectionString:process.env.DATABASE_URL,
-  ssl:true
+  ssl:{rejectUnauthorized: false}
 };
 var db = pgp(cn);
 module.exports = db;
