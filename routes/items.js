@@ -76,9 +76,8 @@ router.post('/' ,middleware.authenticateToken,jsonParser,parser.array('image', 6
   //we get the iduser from jwt token from middleware
   const iduser = req.iduser;
   // here req.files is the multeres return array and only intrested in the id of the picture and that is then passed to the database.
-  console.log(req.file);
-  console.log(req.files);
-  const images = req.files.map(a=>a.public_id);
+
+  const images = req.files.map(a=>a.path);
   const newItem = [
        title,
         description,
