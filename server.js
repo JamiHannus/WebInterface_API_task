@@ -4,10 +4,10 @@ const bodyParser= require('body-parser');
 require('dotenv/config');
 
 var pgp = require('pg-promise')(/* options */);
-var db = pgp(process.env.DB_CONNECTION);
+var db = pgp(process.env.DATABASE_URL);
 module.exports = db;
 const port = process.env.PORT || 3000;
-// app.use(express.json());
+app.use(express.json());
 // routes
 
 const usersRoute = require('./routes/users');
@@ -22,12 +22,8 @@ app.use('/login',loginRoute);
 app.use('/register',registerRoute);
 
 app.get('/', (req, res) => {
-    res.status(200).send({msg:'Hello World!'});
+    res.status(200).send('Hello World!');
   })
-
-app.get('/hello/:parameter1/:parameter2', (req, res) => {
-        res.send('Your route parameters are\n' + JSON.stringify(req.params));
-  });
 
     /* This will be activated as the last if no other route matches. */
     app.use((req, res, next) => {
