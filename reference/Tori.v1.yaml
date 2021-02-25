@@ -251,8 +251,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties: {}
+                $ref: '#/components/schemas/Item'
             application/xml:
               schema:
                 $ref: '#/components/schemas/Item'
