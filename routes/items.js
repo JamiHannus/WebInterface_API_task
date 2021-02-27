@@ -183,7 +183,7 @@ router.delete('/:iditem' ,middleware.authenticateToken,jsonParser, (req, res)=> 
           console.log(imagepath);
           //here we cut the url of the image to get the public id for the image deletion
           let [puplicid] =imagepath.map(x => x.substring(x.lastIndexOf('/') + 1).split('.')[0]);
-          cloudinary.v2.process.env.CLOUDINARY_URL.destroy(puplicid, function(err,result) {
+          cloudinary.v2.destroy(puplicid, function(err,result) {
             if(err){
               console.log("error with img cloudinary delete",err);
               return res.status(400).json('Clodinary deletion problem');
