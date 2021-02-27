@@ -4,12 +4,12 @@ const router = express.Router();
 
 // multer + cludinary
 const multer  = require('multer')
-const cloudinary = require('cloudinary');
+const cloudinary = require('cloudinary').v2;
 const {CloudinaryStorage} = require('multer-storage-cloudinary');
 
 //cloudinary settings
 const  storage = new CloudinaryStorage({
-  cloudinary: cloudinary.v2,
+  cloudinary: cloudinary,
   params:{
     folder: '/tori', 
     Format: ['jpg', 'png']
@@ -168,38 +168,53 @@ router.post('/' ,middleware.authenticateToken,jsonParser, (req, res)=> {
   })
 
 });
-// delete item and the picuters
+// delete item basic version
 router.delete('/:iditem' ,middleware.authenticateToken,jsonParser, (req, res)=> {
     //we get the iduser from jwt token from middleware
     //and iditem to delete from route
     const iduser = req.iduser;
     const iditem=req.params.iditem;
-    db.any('SELECT * FROM items WHERE iditem=$1 AND iduser=$2 ',[iditem,iduser])
-        .then((data)  =>{
-          //get the items image paths from data base
-          let imagepath = data[0].images;
-          //here we cut the url of the image to get the public id for the image deletion
-          let puplicid =imagepath.map(x => x.substring(x.lastIndexOf('/') + 1).split('.')[0]);
-          console.log(puplicid);
-          puplicid.map(id => cloudinary.v2.uploader.destroy(id, function(err,result) {
-                          if(err){
-                            console.log("error with img cloudinary delete",err);
-                            return res.status(400).json('Clodinary deletion problem');
-                                }
-                          db.one("DELETE * FROM items WHERE iditem=$1 AND iduser=$2",[iditem,iduser])
-                          .then((result) => res.status(200).send('item deleted'+result))      
-                          .catch((err) => {
-                          console.log("error ", err);
-                          res.sendStatus(501).json('Something went wrong');
-                            });
-                          })
-                        );
-          })
+    db.one('DELETE * FROM items WHERE iditem=$1 AND iduser=$2 ',[iditem,iduser])
+        .then((res)=>send.status(200).send.msg("item deleted" + res))
         .catch((err) => {
             console.log("error ", err);
             res.sendStatus(501).json('Something went wrong');
         });
   });
+
+
+// // delete item and the picuters
+// router.delete('/:iditem' ,middleware.authenticateToken,jsonParser, (req, res)=> {
+//   //we get the iduser from jwt token from middleware
+//   //and iditem to delete from route
+//   const iduser = req.iduser;
+//   const iditem=req.params.iditem;
+//   db.any('SELECT * FROM items WHERE iditem=$1 AND iduser=$2 ',[iditem,iduser])
+//       .then((data)  =>{
+//         //get the items image paths from data base
+//         let imagepath = data[0].images;
+//         //here we cut the url of the image to get the public id for the image deletion
+//         let puplicid =imagepath.map(x => x.substring(x.lastIndexOf('/') + 1).split('.')[0]);
+//         console.log(puplicid);
+//         puplicid.map(id => cloudinary.v2.uploader.destroy(id, function(err,result) {
+//                         if(err){
+//                           console.log("error with img cloudinary delete",err);
+//                           return res.status(400).json('Clodinary deletion problem');
+//                               }
+//                         db.one("DELETE * FROM items WHERE iditem=$1 AND iduser=$2",[iditem,iduser])
+//                         .then((result) => res.status(200).send('item deleted'+result))      
+//                         .catch((err) => {
+//                         console.log("error ", err);
+//                         res.sendStatus(501).json('Something went wrong');
+//                           });
+//                         })
+//                       );
+//         })
+//       .catch((err) => {
+//           console.log("error ", err);
+//           res.sendStatus(501).json('Something went wrong');
+//       });
+// });
 
 
 module.exports = router;
