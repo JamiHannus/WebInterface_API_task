@@ -26,7 +26,7 @@ app.use('/login',loginRoute);
 app.use('/register',registerRoute);
 
 app.get('/', (req, res) => {
-    res.status(200).send('Hello World!');
+    res.status(200).send('<p><p style="text-align: center;"><span style="text-decoration: underline;"><strong>Available API endpoints</strong></span></p><p style="text-align: center;">/items/:itemid or all items items/0 [GET]</p><p style="text-align: center;">/items/location/:location [GET]</p><p style="text-align: center;">/items/category/:category [GET]</p><p style="text-align: center;">/items/multi/:location/:category [GET]</p><p style="text-align: center;">/register [POST]</p><p style="text-align: center;"><span style="text-decoration: underline;">HTTP basic login</span></p><p style="text-align: center;">/login [POST]</p><p style="text-align: center;"><span style="text-decoration: underline;">JWT token gained by login required</span></p><p style="text-align: center;">/users/{email} [GET]</p><p style="text-align: center;">/items [POST],[DELETE]</p></p>')
   })
 
     /* This will be activated as the last if no other route matches. */
@@ -65,13 +65,14 @@ module.exports =  {
     serverInstance = app.listen(port, () => {
       console.log(`listening at port ${port}`);
       console.log('Available API endpoints');
-      console.log('/items/location [GET]');
-      console.log('/items/category [GET]');
-      console.log('/items [POST]');
+      console.log('/items/:itemid or  all items items/0 [GET]');
+      console.log('/items/location/:location [GET]');
+      console.log('/items/category/:category [GET]');
+      console.log('/items/multi/:location/:category [GET]');
+      console.log('/items [POST],[DELETE]');
       console.log('/login [POST]');
       console.log('/users/{email} [GET]');
       console.log('/register [POST]');
-      console.log('/hello/{param1}/{param2} [GET]');
     });
   },
   close: function() {
