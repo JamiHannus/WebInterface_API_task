@@ -77,6 +77,7 @@ router.post('/' ,middleware.authenticateToken,jsonParser, (req, res)=> {
       console.log("error with img upload",err);
       return res.status(400).json('Only up to 6 images');
     }
+    console.log(req.files);
     const { title, description, category, location,deliverytype, price} = req.body;
   //we get the iduser from jwt token from middleware
   const iduser = req.iduser;
@@ -84,7 +85,7 @@ router.post('/' ,middleware.authenticateToken,jsonParser, (req, res)=> {
 
   const images = req.files.map(a=>a.path);
   const newItem = [
-       title,
+        title,
         description,
         category,
         location,
