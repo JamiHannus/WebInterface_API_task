@@ -4,9 +4,9 @@ const router = express.Router();
 
 // multer + cludinary
 const multer  = require('multer')
-const cloudinary = require('cloudinary').v2;
+const cloudinary = require('cloudinary');
 const {CloudinaryStorage} = require('multer-storage-cloudinary');
-
+const uploader= process.env.CLOUDINARY_URL;
 //cloudinary settings
 const  storage = new CloudinaryStorage({
   cloudinary: cloudinary,
@@ -169,7 +169,6 @@ router.post('/' ,middleware.authenticateToken,jsonParser, (req, res)=> {
 });
 // delete item and the picuters
 router.delete('/:iditem' ,middleware.authenticateToken,jsonParser, (req, res)=> {
-  
     //we get the iduser from jwt token from middleware
     //and iditem to delete from route
     const iduser = req.iduser;
@@ -183,7 +182,7 @@ router.delete('/:iditem' ,middleware.authenticateToken,jsonParser, (req, res)=> 
           console.log(imagepath);
           //here we cut the url of the image to get the public id for the image deletion
           let [puplicid] =imagepath.map(x => x.substring(x.lastIndexOf('/') + 1).split('.')[0]);
-          cloudinary.v2.destroy(puplicid, function(err,result) {
+          cloudinary.v2.uploader.destroy(puplicid, function(err,result) {
             if(err){
               console.log("error with img cloudinary delete",err);
               return res.status(400).json('Clodinary deletion problem');
