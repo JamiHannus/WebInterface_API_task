@@ -72,6 +72,7 @@ router.get('/category',jsonParser, (req, res)=> {
   })
 });
 router.post('/' ,middleware.authenticateToken,jsonParser, (req, res)=> {
+  console.log(req)
   parser(req,res, function (err){
     if(err){
       console.log("error with img upload",err);
