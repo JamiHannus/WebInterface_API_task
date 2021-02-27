@@ -1,9 +1,8 @@
 const express = require('express');
 const db = require('../server');
 const router = express.Router();
+
 // multer + cludinary
-
-
 const multer  = require('multer')
 const cloudinary = require('cloudinary').v2;
 const {CloudinaryStorage} = require('multer-storage-cloudinary');
@@ -16,6 +15,7 @@ const  storage = new CloudinaryStorage({
   },
   });
 const parser = multer({ storage: storage }).array('image', 6);
+
 //middleware
 const middleware =require('../components/checkToken');
 const bodyParser = require('body-parser')
@@ -27,9 +27,12 @@ var Validator = require('jsonschema').Validator;
 const userRegister = require('../schemas/newItem.json');
 const { path } = require('dotenv/lib/env-options');
 
-router.get('/',jsonParser, (req, res)=> {
-  const iditem = req.body.iditem;
-  db.query('SELECT * FROM items WHERE iditem=$1',[iditem])
+
+// Search by item id if id = 0 then get all itesm in database
+router.get('/:iditem',jsonParser, (req, res)=> {
+  const iditem=req.params.iditem
+  if (iditem == 0){
+    db.any('SELECT * FROM items',[iditem])
   .then(data => { 
       if (data.length == 0) return res.status(400).send({msg:'No items found'});
       console.log(data)
@@ -41,14 +44,32 @@ router.get('/',jsonParser, (req, res)=> {
     console.log('Something went wrong')
       // error
   })
+  }
+  else{
+db.query('SELECT * FROM items WHERE iditem=$1',[iditem])
+  .then(data => { 
+      if (data.length == 0) return res.status(400).send({msg:'No items found'});
+      console.log(data)
+    //send the item with that id
+    res.send(data);  
+  })
+  .catch(error => {
+    console.log(error);
+    console.log('Something went wrong')
+      // error
+  })
+  }
 });
-router.get('/location',jsonParser, (req, res)=> {
-    const location = req.body.location ;
+
+//Search by location
+router.get('/location/:location',jsonParser, (req, res)=> {
+    const location=req.params.location;
     db.query('SELECT * FROM items WHERE location=$1 ',[location])
     .then(data => { 
         if (data.length == 0) return res.status(400).send('No items found');
         console.log(data)
-      //send all items what match
+      //send all items what match 
+      //Oulu->so all oulu items in db
       res.send(data);  
     })
     .catch(error => {
@@ -57,8 +78,9 @@ router.get('/location',jsonParser, (req, res)=> {
         // error
     })
 });
-router.get('/category',jsonParser, (req, res)=> {
-  const category = req.body.category ;
+//Search by category
+router.get('/category/:category',jsonParser, (req, res)=> {
+  const category=req.params.category;
   db.query('SELECT * FROM items WHERE category=$1 ',[category])
   .then(data => { 
       if (data.length == 0) return res.status(400).send('No items found');
@@ -71,6 +93,44 @@ router.get('/category',jsonParser, (req, res)=> {
       // error
   })
 });
+//Search by location and category
+router.get('/multi/:location/:category',jsonParser, (req, res)=> {
+  const location=req.params.location;
+  const category=req.params.category;
+  db.query('SELECT * FROM items WHERE location=$1 AND category=$2 ',[location,category])
+  .then(data => { 
+      if (data.length == 0) return res.status(400).send('No items found');
+      console.log(data)
+    //send all items what match 
+    //Oulu->so all oulu items in db
+    res.send(data);  
+  })
+  .catch(error => {
+    console.log(error);
+    console.log('Something went wrong')
+      // error
+  })
+});
+//   dosent work
+// router.get('/dateposted/:dateposted:',jsonParser, (req, res)=> {
+//   console.log(req.params);
+//   const dateposted=req.params.dateposted;
+//   const dateparsed = Date.parse(dateposted)
+//   console.log(dateposted);
+//   console.log(dateparsed);
+//   db.query('SELECT * FROM items WHERE dateposted=$1:date ',[dateparsed])
+//   .then(data => { 
+//       if (data.length == 0) return res.status(400).send('No items found');
+//     //send all items what match
+//     res.send(data);
+//   })
+//   .catch(error => {
+//     console.log(error);
+//     console.log('Something went wrong')
+//       // error
+//   })
+// });
+
 router.post('/' ,middleware.authenticateToken,jsonParser, (req, res)=> {
   parser(req,res, function (err){
     if(err){
