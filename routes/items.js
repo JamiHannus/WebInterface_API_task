@@ -6,10 +6,10 @@ const router = express.Router();
 const multer  = require('multer')
 const cloudinary = require('cloudinary');
 const {CloudinaryStorage} = require('multer-storage-cloudinary');
-const uploader= process.env.CLOUDINARY_URL;
+
 //cloudinary settings
 const  storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
+  cloudinary: cloudinary.v2,
   params:{
     folder: '/tori', 
     Format: ['jpg', 'png']
