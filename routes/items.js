@@ -176,8 +176,8 @@ router.delete('/:iditem' ,middleware.authenticateToken,jsonParser, (req, res)=> 
         .then((data)  =>{
           console.log(data);
           //get the items image paths from data base
-          console.log(data.images);
-          let imagepath = data.images;
+          console.log(data[0].images);
+          let imagepath = data[0].images;
           console.log(imagepath);
           //here we cut the url of the image to get the public id for the image deletion
           let [puplicid] =imagepath.map(x => x.substring(x.lastIndexOf('/') + 1).split('.')[0]);
