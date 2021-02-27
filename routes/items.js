@@ -174,6 +174,7 @@ router.delete('/:iditem' ,middleware.authenticateToken,jsonParser, (req, res)=> 
     const iditem=req.params.iditem;
     db.any('SELECT * FROM items WHERE iditem=$1 AND iduser=$2 ',[iditem,iduser])
         .then((data)  =>{
+          console.log(data);
           //get the items image paths from data base
           console.log(data.images);
           let imagepath = data.images;
