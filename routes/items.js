@@ -113,25 +113,7 @@ router.get('/multi/:location/:category',jsonParser, (req, res)=> {
       // error
   })
 });
-//   dosent work
-// router.get('/dateposted/:dateposted:',jsonParser, (req, res)=> {
-//   console.log(req.params);
-//   const dateposted=req.params.dateposted;
-//   const dateparsed = Date.parse(dateposted)
-//   console.log(dateposted);
-//   console.log(dateparsed);
-//   db.query('SELECT * FROM items WHERE dateposted=$1:date ',[dateparsed])
-//   .then(data => { 
-//       if (data.length == 0) return res.status(400).send('No items found');
-//     //send all items what match
-//     res.send(data);
-//   })
-//   .catch(error => {
-//     console.log(error);
-//     console.log('Something went wrong')
-//       // error
-//   })
-// });
+
 
 router.post('/' ,middleware.authenticateToken,jsonParser, (req, res)=> {
   parser(req,res, function (err){
@@ -168,19 +150,29 @@ router.post('/' ,middleware.authenticateToken,jsonParser, (req, res)=> {
   })
 
 });
+
 // delete item basic version
 router.delete('/:iditem' ,middleware.authenticateToken,jsonParser, (req, res)=> {
+  console.log('Here is delete start')
     //we get the iduser from jwt token from middleware
     //and iditem to delete from route
     const iduser = req.iduser;
     const iditem=req.params.iditem;
-    db.one('DELETE * FROM items WHERE iditem=$1 AND iduser=$2 ',[iditem,iduser])
-        .then((res)=>send.status(200).send.msg("item deleted" + res))
-        .catch((err) => {
+    console.log(iduser);
+    console.log(iditem);
+    db.result('DELETE FROM items WHERE iditem=$1 AND iduser=$2 ',[iditem,iduser],r => r.rowCount)
+        .then(data => {
+          console.log(data);
+          if (data == 0)return res.status(404).send('No item was delete, try again?');
+          res.status(200).send('Item deleted')
+        })
+        .catch(err => {
             console.log("error ", err);
-            res.sendStatus(501).json('Something went wrong');
-        });
-  });
+            res.status(501).json('Something went wrong');
+        })
+});
+    
+
 
 
 // // delete item and the picuters
@@ -215,6 +207,24 @@ router.delete('/:iditem' ,middleware.authenticateToken,jsonParser, (req, res)=> 
 //           res.sendStatus(501).json('Something went wrong');
 //       });
 // });
-
+//   dosent work
+// router.get('/dateposted/:dateposted:',jsonParser, (req, res)=> {
+//   console.log(req.params);
+//   const dateposted=req.params.dateposted;
+//   const dateparsed = Date.parse(dateposted)
+//   console.log(dateposted);
+//   console.log(dateparsed);
+//   db.query('SELECT * FROM items WHERE dateposted=$1:date ',[dateparsed])
+//   .then(data => { 
+//       if (data.length == 0) return res.status(400).send('No items found');
+//     //send all items what match
+//     res.send(data);
+//   })
+//   .catch(error => {
+//     console.log(error);
+//     console.log('Something went wrong')
+//       // error
+//   })
+// });
 
 module.exports = router;
