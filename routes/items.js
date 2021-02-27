@@ -72,13 +72,11 @@ router.get('/category',jsonParser, (req, res)=> {
   })
 });
 router.post('/' ,middleware.authenticateToken,jsonParser, (req, res)=> {
-  console.log(req)
   parser(req,res, function (err){
     if(err){
       console.log("error with img upload",err);
       return res.status(400).json('Only up to 6 images');
-    }
-    console.log(req.files);
+    } 
     const { title, description, category, location,deliverytype, price} = req.body;
   //we get the iduser from jwt token from middleware
   const iduser = req.iduser;
