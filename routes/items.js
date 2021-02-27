@@ -171,11 +171,13 @@ router.delete('/:iditem' ,middleware.authenticateToken,jsonParser, (req, res)=> 
     //we get the iduser from jwt token from middleware
     //and iditem to delete from route
     const iduser = req.iduser;
-    const iditem=req.params.iditem
+    const iditem=req.params.iditem;
     db.any('SELECT * FROM items WHERE iditem=$1 AND iduser=$2 ',[iditem,iduser])
         .then((data)  =>{
           //get the items image paths from data base
-          let [imagepath] = data.images
+          console.log(data.images);
+          let imagepath = data.images;
+          console.log(imagepath);
           //here we cut the url of the image to get the public id for the image deletion
           let [puplicid] =imagepath.map(x => x.substring(x.lastIndexOf('/') + 1).split('.')[0]);
           cloudinary.v2.uploader.destroy(puplicid, function(err,result) {
