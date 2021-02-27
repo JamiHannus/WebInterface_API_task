@@ -186,7 +186,7 @@ router.delete('/:iditem' ,middleware.authenticateToken,jsonParser, (req, res)=> 
                             console.log("error with img cloudinary delete",err);
                             return res.status(400).json('Clodinary deletion problem');
                                 }
-                          db.query("DELETE * FROM items WHERE iditem=$1 AND iduser=$2",[iditem,iduser])
+                          db.one("DELETE * FROM items WHERE iditem=$1 AND iduser=$2",[iditem,iduser])
                           .then((result) => res.status(200).send('item deleted'+result))      
                           .catch((err) => {
                           console.log("error ", err);
@@ -195,10 +195,10 @@ router.delete('/:iditem' ,middleware.authenticateToken,jsonParser, (req, res)=> 
                           })
                         );
           })
-          .catch((err) => {
+        .catch((err) => {
             console.log("error ", err);
             res.sendStatus(501).json('Something went wrong');
-          });
+        });
   });
 
 
