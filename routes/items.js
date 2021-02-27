@@ -27,6 +27,7 @@ var jsonParser = bodyParser.json()
 var Validator = require('jsonschema').Validator;
 const userRegister = require('../schemas/newItem.json');
 const { path } = require('dotenv/lib/env-options');
+const { map } = require('../server');
 
 
 // Search by item id if id = 0 then get all itesm in database
@@ -175,29 +176,30 @@ router.delete('/:iditem' ,middleware.authenticateToken,jsonParser, (req, res)=> 
     const iditem=req.params.iditem;
     db.any('SELECT * FROM items WHERE iditem=$1 AND iduser=$2 ',[iditem,iduser])
         .then((data)  =>{
-          console.log(data);
           //get the items image paths from data base
-          console.log(data[0].images);
           let imagepath = data[0].images;
-          console.log(imagepath);
           //here we cut the url of the image to get the public id for the image deletion
           let puplicid =imagepath.map(x => x.substring(x.lastIndexOf('/') + 1).split('.')[0]);
           console.log(puplicid);
-          cloudinary.v2.uploader.destroy(puplicid, function(err,result) {
-            if(err){
-              console.log("error with img cloudinary delete",err);
-              return res.status(400).json('Clodinary deletion problem');
-            };
-            console.log(result);
-          db.query("DELETE * FROM items WHERE iditem=$1 AND iduser=$2",[iditem,iduser])
-          .then((result) => res.send('yay'+result))      
+          puplicid.map(id => cloudinary.v2.uploader.destroy(id, function(err,result) {
+                          if(err){
+                            console.log("error with img cloudinary delete",err);
+                            return res.status(400).json('Clodinary deletion problem');
+                                }
+                          db.query("DELETE * FROM items WHERE iditem=$1 AND iduser=$2",[iditem,iduser])
+                          .then((result) => res.status(200).send('item deleted'+result))      
+                          .catch((err) => {
+                          console.log("error ", err);
+                          res.sendStatus(501).json('Something went wrong');
+                            });
+                          })
+                        );
+          })
           .catch((err) => {
-          console.log("error ", err);
-          res.sendStatus(501).json('Something went wrong');
-      });
-    })
+            console.log("error ", err);
+            res.sendStatus(501).json('Something went wrong');
+          });
   });
-});
 
 
 module.exports = router;
