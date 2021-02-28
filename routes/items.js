@@ -34,7 +34,7 @@ const { map } = require('../server');
 router.get('/:iditem',jsonParser, (req, res)=> {
   const iditem=req.params.iditem
   if (iditem == 0){
-    db.any('SELECT * FROM items',[iditem])
+    db.any('SELECT * FROM items ORDER BY iditem DESC LIMIT 10',[iditem])
   .then(data => { 
       if (data.length == 0) return res.status(400).send({msg:'No items found'});
       console.log(data)
