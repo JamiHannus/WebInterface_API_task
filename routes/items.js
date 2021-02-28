@@ -15,7 +15,7 @@ const  storage = new CloudinaryStorage({
     Format: ['jpg', 'png']
   },
   });
-const parser = multer({ storage: storage }).array('image', 6);
+const parser = multer({ storage: storage }).array('image', 4);
 
 //middleware
 const middleware =require('../components/checkToken');
@@ -163,7 +163,7 @@ router.post('/' ,middleware.authenticateToken,jsonParser, (req, res)=> {
   parser(req,res, function (err){
     if(err){
       console.log("error with img upload",err);
-      return res.status(400).json('Only up to 6 images');
+      return res.status(400).json('Only up to 4 images');
     } 
     const { title, description, category, location,deliverytype, price} = req.body;
   //we get the iduser from jwt token from middleware
