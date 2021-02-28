@@ -63,8 +63,8 @@ db.query('SELECT * FROM items WHERE iditem=$1',[iditem])
   }
 });
 //Search by userid
-router.get('/userid/:location',jsonParser, (req, res)=> {
-  const userid=req.params.location;
+router.get('/userid/:userid',jsonParser, (req, res)=> {
+  const userid=req.params.userid;
   db.query('SELECT * FROM items WHERE userid=$1 ',[userid])
   .then(data => { 
       if (data.length == 0) return res.status(400).send('No items found');
@@ -131,6 +131,37 @@ router.get('/multi/:location/:category',jsonParser, (req, res)=> {
 });
 
 
+// update funtion
+router.put('/' ,middleware.authenticateToken,jsonParser, (req, res)=> {    
+    const { title, description, category, location,deliverytype, price,iditem} = req.body;
+  //we get the iduser from jwt token from middleware
+  const iduser = req.iduser;
+  const newItem = [
+        title,
+        description,
+        category,
+        location,
+        deliverytype,
+        price,
+        iditem,
+        iduser,]
+  db.query(
+    "UPDATE  items (title, description, category, location,deliverytype, price) WHERE iditem=$7 AND iduser=$8 VALUES ($1, $2, $3, $4, $6, $7,$8)",
+    newItem,r => r.rowCount)
+    .then(data => {
+      console.log(data);
+      if (data == 0)return res.status(404).send('No updates?');
+      res.status(200).send('Item was updated')
+    })
+    .catch((err) => {
+      console.log("error ", err);
+      res.sendStatus(501).json('Something went wrong');
+    });
+  }
+);
+
+
+
 router.post('/' ,middleware.authenticateToken,jsonParser, (req, res)=> {
   parser(req,res, function (err){
     if(err){
@@ -189,7 +220,7 @@ router.delete('/:iditem' ,middleware.authenticateToken,jsonParser, (req, res)=> 
 });
 
 
-// delete item and the picuters from cloudinary
+// delete item and the pictures from cloudinary
 router.delete('/pictures/:iditem' ,middleware.authenticateToken,jsonParser, (req, res)=> {
   //we get the iduser from jwt token from middleware
   //and iditem to delete from route
@@ -199,7 +230,7 @@ router.delete('/pictures/:iditem' ,middleware.authenticateToken,jsonParser, (req
       .then((data)  =>{
         //get the items image paths from data base
         let imagepath = data[0].images;
-        //here we cut the url of the image to get the public id for the image deletion
+        //here we cut the url of the image to get the public id for the image deletion for claudinary api
         let puplicid =imagepath.map(x => x.substring(x.lastIndexOf('/') + 1).split('.')[0]);
         console.log(puplicid);
         puplicid.map(id => cloudinary.v2.uploader.destroy(id, function(err,result) {
