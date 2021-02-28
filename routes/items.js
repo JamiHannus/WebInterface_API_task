@@ -144,8 +144,7 @@ router.put('/' ,middleware.authenticateToken,jsonParser, (req, res)=> {
         iditem,
               ]
   db.result(
-    "UPDATE  items title, description, category, location,deliverytype, price WHERE iditem=$7  VALUES $1, $2, $3, $4, $6, $7",
-    newItem)
+    "UPDATE  items SET title=$1, description=$2, category=$3, location=$4 ,deliverytype=$5 , price=$6 WHERE iditem=$6  VALUES $1, $2, $3, $4, $6",newItem)
     .then(data => {
       console.log(data.rowCount);
       if (data == 0)return res.status(404).send('No updates?');
