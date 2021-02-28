@@ -145,7 +145,7 @@ router.put('/' ,middleware.authenticateToken,jsonParser, (req, res)=> {
         price,
         iditem,
         iduser,]
-  db.query(
+  db.result(
     "UPDATE  items (title, description, category, location,deliverytype, price) WHERE iditem=$7 AND iduser=$8 VALUES ($1, $2, $3, $4, $6, $7,$8)",
     [newItem],r => r.rowCount)
     .then(data => {
