@@ -62,6 +62,22 @@ db.query('SELECT * FROM items WHERE iditem=$1',[iditem])
   })
   }
 });
+//Search by userid
+router.get('/userid/:location',jsonParser, (req, res)=> {
+  const userid=req.params.location;
+  db.query('SELECT * FROM items WHERE userid=$1 ',[userid])
+  .then(data => { 
+      if (data.length == 0) return res.status(400).send('No items found');
+      console.log(data)
+    //Get all items by that id
+        res.send(data);  
+  })
+  .catch(error => {
+    console.log(error);
+    console.log('Something went wrong')
+      // error
+  })
+});
 
 //Search by location
 router.get('/location/:location',jsonParser, (req, res)=> {
