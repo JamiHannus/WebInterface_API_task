@@ -134,8 +134,6 @@ router.get('/multi/:location/:category',jsonParser, (req, res)=> {
 // update funtion
 router.put('/' ,middleware.authenticateToken,jsonParser, (req, res)=> {    
     const { title, description, category, location,deliverytype, price,iditem} = req.body;
-  //we get the iduser from jwt token from middleware
-  const iduser = req.iduser;
   const newItem = [
         title,
         description,
@@ -144,12 +142,12 @@ router.put('/' ,middleware.authenticateToken,jsonParser, (req, res)=> {
         deliverytype,
         price,
         iditem,
-        iduser,]
+              ]
   db.result(
-    "UPDATE  items (title, description, category, location,deliverytype, price) WHERE iditem=$7 AND iduser=$8 VALUES ($1, $2, $3, $4, $6, $7,$8)",
-    newItem,r => r.rowCount)
+    "UPDATE  items title, description, category, location,deliverytype, price WHERE iditem=$7  VALUES $1, $2, $3, $4, $6, $7",
+    newItem)
     .then(data => {
-      console.log(data);
+      console.log(data.rowCount);
       if (data == 0)return res.status(404).send('No updates?');
       res.status(200).send('Item was updated')
     })
