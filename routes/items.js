@@ -143,8 +143,8 @@ router.put('/' ,middleware.authenticateToken,jsonParser, (req, res)=> {
         price,
         iditem,
               ]
-  db.result(
-    "UPDATE  items SET title=$1, description=$2, category=$3, location=$4 ,deliverytype=$5, price=$6 WHERE iditem=$7",newItem)
+  db.one(
+    "UPDATE  items SET title=$1 description=$2 category=$3 location=$4 deliverytype=$5 price=$6 WHERE iditem=$7",newItem)
     .then(data => {
       console.log(data.rowCount);
       if (data == 0)return res.status(404).send('No updates?');
