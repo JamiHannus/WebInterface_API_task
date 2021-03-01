@@ -3,6 +3,6 @@ API shopping api
 
 
 #
-https://t9haja00.stoplight.io/settings/webinterface-api-task
+https://app.swaggerhub.com/apis/ParasApi/Toriapi/1.1
 Link for the Api document
 
