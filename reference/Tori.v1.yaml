@@ -102,8 +102,8 @@ paths:
             examples:
               example-1:
                 value:
-                  firstName: string
-                  lastName: string
+                  firstName: test
+                  lastName: tast
                   email: email@domain.com
                   password: pa$$word
         description: Post the necessary fields for the API to create a new user.
@@ -137,24 +137,17 @@ paths:
                 type: object
         '500':
           description: Internal Server Error
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                password:
-                  type: string
-              required:
-                - email
-                - password
-        description: ''
       security:
         - basic login to get the token: []
       description: Here you can login with registered user and you are given an JWT token what then you can use to create new items or accsess protected paths
-  /items/category:
+    get:
+      summary: ''
+      operationId: get-login
+      responses:
+        '200':
+          description: OK
+      description: Here be token giving. Use post to log in
+  '/items/category/{category}':
     get:
       summary: Your GET endpoint
       tags: []
@@ -170,19 +163,15 @@ paths:
         '500':
           description: '''Something went wrong'''
       operationId: get-items-category
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                category:
-                  type: string
-                  example: Furniture
-        description: ''
       description: send a categoty of item you want to find
-    parameters: []
-  /Items/location:
+    parameters:
+      - schema:
+          type: string
+        name: category
+        in: path
+        required: true
+        description: Furniture
+  '/Items/location/{location}':
     get:
       summary: Your GET endpoint
       tags: []
@@ -199,49 +188,13 @@ paths:
           description: Something went wrong
       operationId: get-Items-location-location
       description: Send the location what you want to find items in.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                location:
-                  type: string
-                  description: Oulu
-              required:
-                - location
-        description: ''
-    parameters: []
-  /items:
-    post:
-      summary: ''
-      operationId: post-items
-      responses:
-        '200':
-          description: OK
-      security:
-        - JWT: []
-      description: |-
-        User created a item.
-        Neeeds to be logged in
-        User uses the jwt token given when logging in
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Item'
-            examples:
-              example-1:
-                value:
-                  Title: string
-                  Description: string
-                  Category: string
-                  Location: string
-                  Price: 1
-                  Delivery type: string
-                  i:
-                    - image: string
-        description: ''
+    parameters:
+      - schema:
+          type: string
+        name: location
+        in: path
+        required: true
+  '/items/{iditem}':
     get:
       summary: ''
       operationId: get-items
@@ -259,26 +212,141 @@ paths:
           description: No items found
         '500':
           description: Something went wrong
+      description: |-
+        Get item by Id 
+        If you put 0 You get 10 last items
+        Can be get all data from single item
+    parameters:
+      - schema:
+          type: string
+        name: iditem
+        in: path
+        required: true
+    delete:
+      summary: ''
+      operationId: delete-items-iditem
+      responses:
+        '200':
+          description: Item deleted
+        '400':
+          description: 'No item was delete, try again?'
+        '500':
+          description: Something went wrong
+      description: Deletes item
+      security:
+        - JWT: []
+  '/items/multi/{location}/{category}':
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '400':
+          description: No items found
+        '500':
+          description: Something went wrong
+      operationId: get-items-multi
+      description: Get items with 2 quary params
+    parameters:
+      - schema:
+          type: string
+        name: location
+        in: path
+        required: true
+        description: Oulu
+      - schema:
+          type: string
+        name: category
+        in: path
+        required: true
+        description: Furniture
+  /items:
+    post:
+      summary: ''
+      operationId: post-items
+      responses:
+        '200':
+          description: OK
+      description: |-
+        User creates a item.
+        Neeeds to be logged in
+        User uses the jwt token given when logging in
+      security:
+        - JWT: []
+    put:
+      summary: ''
+      operationId: put-items
+      responses:
+        '200':
+          description: Item was updated
+        '404':
+          description: Nothing was updated
+        '500':
+          description: Something went wrong
+        '501':
+          description: Something went wrong
+      description: User updates their posting
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                category:
+                  type: string
+                location:
+                  type: string
+                deliverytype:
+                  type: string
+                price:
+                  type: string
                 iditem:
-                  type: number
-                  description: Automatically generated when item is created in database
-                  minimum: 1
+                  type: string
+                  description: |
+                    This is automatically
               required:
+                - title
+                - description
+                - category
+                - location
+                - deliverytype
+                - price
                 - iditem
-            examples:
-              example-1:
-                value:
-                  iditem: 1
+            examples: {}
         description: ''
-      description: |-
-        Get item by Id
-        Can be get all data from single item
+      security:
+        - JWT: []
+  '/items/pictures/{iditem}':
+    delete:
+      summary: ''
+      operationId: delete-items-pictures
+      responses:
+        '200':
+          description: Item deleted
+        '400':
+          description: error with img cloudinary delete
+        '404':
+          description: 'no item was delete, try again?'
+        '500':
+          description: Something went wrong'        
+      security:
+        - JWT: []
+      description: 'Almoust working delete '
+    parameters:
+      - schema:
+          type: string
+        name: iditem
+        in: path
+        required: true
 components:
   schemas:
     User:
